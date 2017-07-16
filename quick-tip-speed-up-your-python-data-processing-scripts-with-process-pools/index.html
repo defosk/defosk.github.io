@@ -1,0 +1,333 @@
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Quick Tip: Speed up your Python data processing scripts with Process Pools</title>
+    <meta name="description" content="">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic%7COpen+Sans:700,400">
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=222cfc60eb">
+
+
+    <link rel="canonical" href="http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/amp/">
+    
+    <meta property="og:site_name" content="defosk">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Quick Tip: Speed up your Python data processing scripts with Process Pools">
+    <meta property="og:description" content="Get a 4x speed-up with 3 lines of code! Python is a great programming language for crunching data and automating repetitive tasks. Got a few gigs of web server logs to process or a million images that need resizing? No problem! You can almost always find a helpful Python library">
+    <meta property="og:url" content="http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/">
+    <meta property="article:published_time" content="2017-07-16T22:40:21.000Z">
+    <meta property="article:modified_time" content="2017-07-16T22:40:21.000Z">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Quick Tip: Speed up your Python data processing scripts with Process Pools">
+    <meta name="twitter:description" content="Get a 4x speed-up with 3 lines of code! Python is a great programming language for crunching data and automating repetitive tasks. Got a few gigs of web server logs to process or a million images that need resizing? No problem! You can almost always find a helpful Python library">
+    <meta name="twitter:url" content="http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Oleg">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "defosk",
+        "logo": "http://localhost:2368/ghost/img/ghosticon.jpg"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Oleg",
+        "url": "http://localhost:2368/author/oleg/",
+        "sameAs": []
+    },
+    "headline": "Quick Tip: Speed up your Python data processing scripts with Process Pools",
+    "url": "http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/",
+    "datePublished": "2017-07-16T22:40:21.000Z",
+    "dateModified": "2017-07-16T22:40:21.000Z",
+    "description": "Get a 4x speed-up with 3 lines of code! Python is a great programming language for crunching data and automating repetitive tasks. Got a few gigs of web server logs to process or a million images that need resizing? No problem! You can almost always find a helpful Python library",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://localhost:2368"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.11">
+    <link rel="alternate" type="application/rss+xml" title="defosk" href="http://localhost:2368/rss/">
+</head>
+<body class="post-template nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-home"><a href="http://localhost:2368/">Home</a></li>
+    </ul>
+        <a class="subscribe-button icon-feed" href="http://localhost:2368/rss/">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+            <a class="menu-button icon-menu" href="index.html#"><span class="word">Menu</span></a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Quick Tip: Speed up your Python data processing scripts with Process Pools</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2017-07-16">16 July 2017</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Get a 4x speed-up with 3 lines of code!</p>
+
+<p>Python is a great programming language for crunching data and automating repetitive tasks. Got a few gigs of web server logs to process or a million images that need resizing? No problem! You can almost always find a helpful Python library that makes the job easy.</p>
+
+<p>But while Python makes coding fun, it’s not always the quickest to run. By default, Python programs execute as a single process using a single CPU. If you have a computer made in the last decade, there’s a good chance it has 4 (or more) CPU cores. That means that 75% or more of your computer’s power is sitting there nearly idle while you are waiting for your program to finish running!</p>
+
+<p>Let’s learn how to take advantage of the full processing power of your computer by running Python functions in parallel. Thanks to Python’s concurrent.futures module, it only takes 3 lines of code to turn a normal program into one that can process data in parallel.  </p>
+
+<h4 id="thenormalapproach">The Normal Approach</h4>
+
+<p>Let’s say we have a folder full of photos and we want to create thumbnails of each photo. <br>
+Here’s a short program that uses Python’s built-in glob function to get a list of all the jpeg files in a folder and then uses the Pillow image processing library to save out 128-pixel thumbnails of each photo:</p>
+
+<pre><code class="language-python">import glob  
+import os  
+from PIL import Image
+
+
+def make_image_thumbnail(filename):  
+    # The thumbnail will be named "&lt;original_filename&gt;_thumbnail.jpg"
+    base_filename, file_extension = os.path.splitext(filename)
+    thumbnail_filename = f"{base_filename}_thumbnail{file_extension}"
+
+    # Create and save thumbnail image
+    image = Image.open(filename)
+    image.thumbnail(size=(128, 128))
+    image.save(thumbnail_filename, "JPEG")
+
+    return thumbnail_filename
+
+
+# Loop through all jpeg files in the folder and make a thumbnail for each
+for image_file in glob.glob("*.jpg"):  
+    thumbnail_file = make_image_thumbnail(image_file)
+
+    print(f"A thumbnail for {image_file} was saved as {thumbnail_file}")
+</code></pre>
+
+<p>This program follows a simple pattern you’ll often see in data processing scripts: <br>
+1. You start with a list of files (or other data) that you want to process. <br>
+2. You write a helper function that can process one piece of that data. <br>
+3.You process each piece of data, one at a time, using a for loop to call the helper function.</p>
+
+<p>Let’s test this program on a folder with 1000 jpeg files and see how long it takes to run:  </p>
+
+<pre><code>$ time python3 thumbnails_1.py
+A thumbnail for 1430028941_4db9dedd10.jpg was saved as 1430028941_4db9dedd10_thumbnail.jpg  
+[... about 1000 more lines of output ...]
+real 0m8.956s  
+user 0m7.086s  
+sys 0m0.743s  
+</code></pre>
+
+<p>The program took 8.9 seconds to run. But how hard was the computer working? <br>
+Let’s run the program again and check Activity Monitor while it’s running:</p>
+
+<p>The computer is 75% idle! What’s up with that? <br>
+The problem is that my computer has 4 CPU cores, but Python is only using one of them. So while I’m maxing out the capacity of one CPU, the other three CPUs aren’t doing anything. I need a way to split the work load into 4 separate chunks that I can run in parallel. Luckily Python has an easy way to do this!</p>
+
+<h4 id="letsmakesomeprocesspools">Let’s make some Process Pools</h4>
+
+<p>Here’s an approach we can use to process this data in parallel: <br>
+1. Split the list of jpeg files into 4 smaller chucks. <br>
+2. Run 4 separate instances of the Python interpreter. <br>
+3. Have each instance of Python process one of the 4 chunks of data. <br>
+4. Combine the results from the 4 processes to get the final list of results.</p>
+
+<p>Four copies of Python running on four separate CPUs should be able to do roughly 4 times as much work as one CPU, right? <br>
+The neat part is that Python handles all the grunt work for us. We just tell it which function we want to run and how many instances of Python to use, and it does the rest. We only have to change <strong>3 lines of code</strong>.</p>
+
+<p>First, we need to import the concurrent.futures library. This library is built right into Python:  </p>
+
+<pre><code class="language-python ">import concurrent.futures  
+</code></pre>
+
+<p>Next, we need to tell Python to boot up 4 extra Python instances. We do that by telling it to create a <strong>Process Pool</strong>:  </p>
+
+<pre><code class="language-python">with concurrent.futures.ProcessPoolExecutor() as executor:  
+</code></pre>
+
+<p>By default, it will create one Python process for each CPU in your machine. So if you have 4 CPUs, this will start up 4 Python processes.</p>
+
+<p>The final step is to ask the Process Pool to execute our helper function on our list of data using those 4 processes. We can do that by replacing the original for loop we had:  </p>
+
+<pre><code class="language-python ">for image_file in glob.glob("*.jpg"):  
+    thumbnail_file = make_image_thumbnail(image_file)
+</code></pre>
+
+<p>With this new call to executor.map():  </p>
+
+<pre><code class="language-python">image_files = glob.glob("*.jpg")  
+for image_file, thumbnail_file in zip(image_files, executor.map(make_image_thumbnail, image_files)):  
+</code></pre>
+
+<p>The <code>executor.map()</code> function takes in the helper function to call and the list of data to process with it. It does all the hard work of splitting up the list, sending the sub-lists off to each child process, running the child processes, and combining the results. Neat!</p>
+
+<p>This also gives us back the result of each function call. The <code>executor.map()</code> function returns results in the same order as the list of data we gave it to process. So I’ve used Python’s <code>zip()</code> function as a shortcut to grab the original filename and the matching result in one step.</p>
+
+<p>Here’s how our program looks with those three changes:  </p>
+
+<pre><code class="language-python ">import glob  
+import os  
+from PIL import Image  
+import concurrent.futures
+
+
+def make_image_thumbnail(filename):  
+    # The thumbnail will be named "&lt;original_filename&gt;_thumbnail.jpg"
+    base_filename, file_extension = os.path.splitext(filename)
+    thumbnail_filename = f"{base_filename}_thumbnail{file_extension}"
+
+    # Create and save thumbnail image
+    image = Image.open(filename)
+    image.thumbnail(size=(128, 128))
+    image.save(thumbnail_filename, "JPEG")
+
+    return thumbnail_filename
+
+
+# Create a pool of processes. By default, one is created for each CPU in your machine.
+with concurrent.futures.ProcessPoolExecutor() as executor:  
+    # Get a list of files to process
+    image_files = glob.glob("*.jpg")
+
+    # Process the list of files, but split the work across the process pool to use all CPUs!
+    for image_file, thumbnail_file in zip(image_files, executor.map(make_image_thumbnail, image_files)):
+        print(f"A thumbnail for {image_file} was saved as {thumbnail_file}")
+</code></pre>
+
+<p>Let’s run the program and see if it finishes any faster:  </p>
+
+<pre><code>$ time python3 thumbnails_2.py
+A thumbnail for 1430028941_4db9dedd10.jpg was saved as 1430028941_4db9dedd10_thumbnail.jpg  
+[... about 1000 more lines of output ...]
+real 0m2.274s  
+user 0m8.959s  
+sys 0m0.951s  
+</code></pre>
+
+<p>It finished in 2.2 seconds! That’s a 4x speed-up over the original version. The elapsed time was faster because we are using 4 CPUs instead of just one.</p>
+
+<p>But if you look closely, you’ll see that the “user” time was almost 9 seconds. How did the program finish in 2.2 seconds but still somehow run for 9 seconds? That seems… impossible?</p>
+
+<p>That’s because the “user” time is a sum of CPU time across all CPUs. We completed the same 9 seconds of work as last time — but we finished it with 4 CPUs in only 2.2 real-world seconds!</p>
+
+<p><em>Note: There is some overhead in spawning more Python processes and shuffling data around between them, so you won’t always get this much of a speed improvement. If you are working with huge data sets, there is a trick with setting the chunksize parameter that can help a lot.</em></p>
+
+<h4 id="willthisalwaysspeedupmyprograms">Will this always speed up my programs?</h4>
+
+<p>Using Process Pools is a great solution when you have a list of data to process and each piece of data can be processed independently. Here are some examples of when multiprocessing is a good fit:</p>
+
+<ul>
+<li>Grabbing statistics out of a collection of separate web server log files</li>
+<li>Parsing data out of a bunch of XML, CSV or json files</li>
+<li>Pre-processing lots of images to create a machine learning data set</li>
+</ul>
+
+<p>But Process Pools aren’t always the answer. Using a Process Pool requires passing data back and forth between separate Python processes. If the data you are working with can’t be efficiently passed between processes, this won’t work. The data you are processing needs to be a type that Python knows how to pickle.</p>
+
+<p>Also, the data won’t be processed in a predictable order. If you need the result from processing the previous piece of data to process the next piece of data, this won’t work.</p>
+
+<h4 id="whataboutthegil">What about the GIL?</h4>
+
+<p>You might have heard that Python has a Global Interpreter Lock, or GIL. That means that even if your program is multi-threaded, only one instruction of Python code can be executed at once by any thread. In other words, multi-threaded Python code can’t truly run in parallel.</p>
+
+<p>But Process Pools work around this issue! Because we are running truly separate Python instances, each instance has it’s own GIL. You get true parallel execution of Python code (at the cost of some extra overhead).</p>
+
+<h4 id="dontbeafraidofparallelprocessing">Don’t be afraid of Parallel Processing!</h4>
+
+<p>With the <code>concurrent.futures</code> library, Python gives you a simple way to tweak your scripts to use all the CPU cores in your computer at once. Don’t be afraid to try it out. Once you get the hang of it, it’s as simple as using a for loop, but often a whole lot faster.</p>
+        </section>
+
+        <footer class="post-footer">
+
+
+
+            <section class="author">
+                <h4><a href="../author/oleg/">Oleg</a></h4>
+
+                    <p>Read <a href="../author/oleg/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=Quick%20Tip%3A%20Speed%20up%20your%20Python%20data%20processing%20scripts%20with%20Process%20Pools&amp;url=http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+        </footer>
+
+    </article>
+</main>
+
+<aside class="read-next">
+    <a class="read-next-story prev no-cover" href="../welcome-to-ghost/">
+        <section class="post">
+            <h2>Welcome to Ghost</h2>
+            <p>You're live! Nice. We've put together a little post to introduce you to the Ghost editor and get you…</p>
+        </section>
+    </a>
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://localhost:2368">defosk</a> © 2017</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=222cfc60eb"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=222cfc60eb"></script>
+
+</body>
