@@ -1,0 +1,383 @@
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Разработка SaaS на Django и Python. Часть 1. Поддомены и публичный API</title>
+    <meta name="description" content="">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic%7COpen+Sans:700,400">
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=222cfc60eb">
+
+
+    <link rel="canonical" href="http://localhost:2368/post-post-2/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="http://localhost:2368/post-post-2/amp/">
+    
+    <meta property="og:site_name" content="defosk">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Разработка SaaS на Django и Python. Часть 1. Поддомены и публичный API">
+    <meta property="og:description" content="Вдохновившись интересными решениями на последних наших проектах, я решил описать то, как можно реализовать три типичные составляющие SaaS проекта на Django и Python. Материал будет разбит на две части, в которых мы рассмотрим следующие темы.  Размещение каждого аккаунта на отдельном поддомене;  Простой и быстрый способ выделить публичный API вашего сервиса;">
+    <meta property="og:url" content="http://localhost:2368/post-post-2/">
+    <meta property="article:published_time" content="2017-07-16T23:16:39.000Z">
+    <meta property="article:modified_time" content="2017-07-16T23:16:58.000Z">
+    <meta property="article:tag" content="api">
+    <meta property="article:tag" content="design">
+    <meta property="article:tag" content="django">
+    <meta property="article:tag" content="python">
+    <meta property="article:tag" content="saas">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Разработка SaaS на Django и Python. Часть 1. Поддомены и публичный API">
+    <meta name="twitter:description" content="Вдохновившись интересными решениями на последних наших проектах, я решил описать то, как можно реализовать три типичные составляющие SaaS проекта на Django и Python. Материал будет разбит на две части, в которых мы рассмотрим следующие темы.  Размещение каждого аккаунта на отдельном поддомене;  Простой и быстрый способ выделить публичный API вашего сервиса;">
+    <meta name="twitter:url" content="http://localhost:2368/post-post-2/">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Oleg">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="api, design, django, python, saas">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "defosk",
+        "logo": "http://localhost:2368/ghost/img/ghosticon.jpg"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Oleg",
+        "url": "http://localhost:2368/author/oleg/",
+        "sameAs": []
+    },
+    "headline": "Разработка SaaS на Django и Python. Часть 1. Поддомены и публичный API",
+    "url": "http://localhost:2368/post-post-2/",
+    "datePublished": "2017-07-16T23:16:39.000Z",
+    "dateModified": "2017-07-16T23:16:58.000Z",
+    "keywords": "api, design, django, python, saas",
+    "description": "Вдохновившись интересными решениями на последних наших проектах, я решил описать то, как можно реализовать три типичные составляющие SaaS проекта на Django и Python. Материал будет разбит на две части, в которых мы рассмотрим следующие темы.  Размещение каждого аккаунта на отдельном поддомене;  Простой и быстрый способ выделить публичный API вашего сервиса;",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://localhost:2368"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.11">
+    <link rel="alternate" type="application/rss+xml" title="defosk" href="http://localhost:2368/rss/">
+</head>
+<body class="post-template tag-api tag-design tag-django tag-python tag-saas nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-home"><a href="http://localhost:2368/">Home</a></li>
+    </ul>
+        <a class="subscribe-button icon-feed" href="http://localhost:2368/rss/">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+            <a class="menu-button icon-menu" href="index.html#"><span class="word">Menu</span></a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post tag-api tag-design tag-django tag-python tag-saas">
+
+        <header class="post-header">
+            <h1 class="post-title">Разработка SaaS на Django и Python. Часть 1. Поддомены и публичный API</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2017-07-16">16 July 2017</time>  on <a href="../tag/api/">api</a>, <a href="../tag/design/">design</a>, <a href="../tag/django/">django</a>, <a href="../tag/python/">python</a>, <a href="../tag/saas/">saas</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Вдохновившись интересными решениями на последних наших проектах, я решил описать то, как можно реализовать три типичные составляющие SaaS проекта на Django и Python.</p>
+
+<p>Материал будет разбит на две части, в которых мы рассмотрим следующие темы. </p>
+
+<ul>
+<li>Размещение каждого аккаунта на отдельном поддомене; </li>
+<li>Простой и быстрый способ выделить публичный API вашего сервиса; </li>
+<li>Размещение данных каждого аккаунта в отдельных базах данных.</li>
+</ul>
+
+<p>Сегодня речь пойдет о первых двух пунктах. Рассказ о размещении аккаунтов в разных базах данных заслуживает отдельной статьи.</p>
+
+<p>На сервере мы часто используем Django и Python, Celery и Redis для реализации распределенной очереди задач, а в качестве СУБД PostgreSQL или MySQL. Клиентская сторона обычно реализуется на AngularJS, ReactJS или другом MVVM/MVC фреймворке.</p>
+
+<p>Исходя из этого, далее по тексту я буду предполагать, что на вашем проекте используется подобный технологический стек, хотя это не принципиально.</p>
+
+<h4 id="1">1. Отдельные поддомены</h4>
+
+<p>Обычно SaaS-сервисы размещают своих клиентов на отдельных поддоменах. Каких-то особых преимуществ с точки зрения архитектуры это не дает, зато у пользователей появляется возможность использовать название их компании в строке браузера. Это приятно выглядит, а так же выделяет портал как точку входа именно для пользователей конкретной компании.</p>
+
+<p>О том, как работать с поддоменами в Django мы уже давно рассказывали в этом блоге: <a href="http://blog.antidasoftware.com/2015/12/django.html">http://blog.antidasoftware.com/2015/12/django.html</a>.</p>
+
+<p>Если вы не знакомы с тем, как организовать работу с несколькими поддоменами в Django или не работали с библиотекой <a href="http://django-subdomains.readthedocs.io/en/latest/">Django Subdomains</a>, рекомендуем прочитать статью. Мы периодически будем обращаться к этому материалу далее по тексту.</p>
+
+<h4 id="2api">2. Публичный API</h4>
+
+<p>Так как фронтенд построен на MVVM/MVC фреймворке, то серверная сторона должна быть реализована в виде WebAPI.</p>
+
+<p>WebAPI можно создавать по-разному. За основу можно взять Django REST Framework и на базе него построить API. Это правильный путь, если вам нужен именно REST API с поддержкой OAuth, или вы начинаете проект с нуля.</p>
+
+<p>Но что делать, если вам нужно вынести наружу часть своего внутренного API в обычном приложении Django, с которым уже сейчас работает, например, AngularJS? Или если вам по каким-то причинам не подходит REST API или Django REST Framework? Хакнуть Решить проблему можно достаточно интересно и просто.</p>
+
+<p>Так как по умолчанию в Django приложениях применяется аутентификация пользователей через сессии, которые передаются в cookie, то нам нужно добавить возможность делать запросы к API по ключу или токену. При этом токен должен однозначно аутентифицировать конкретного пользователя.</p>
+
+<p>Определим ключ API для каждого пользователя.</p>
+
+<pre><code class="language-python">class AccountUser(AbstractEmailUser):  
+   ...
+   api_token = models.CharField(max_length=64, default=generate_api_token)
+   ...
+</code></pre>
+
+<p>Теперь нам нужно написать кастомный backend для аутентификации пользователей по токену. Его задача заключается лишь в том, чтобы найти в базе данных пользователя с соответствующим api_token. Подробнее про аутентификацию в Django и возможности ее расширения: <a href="https://docs.djangoproject.com/en/1.11/topics/auth/">https://docs.djangoproject.com/en/1.11/topics/auth/</a>.</p>
+
+<pre><code class="language-python">class ApiTokenBackend(object):  
+    def authenticate(self, api_token=None):
+        if not api_token:
+            return None
+
+        try:
+            return AccountUser.objects.get(api_token=api_token)
+        except AccountUser.DoesNotExist:
+            return None
+
+    def get_user(self, user_id):
+        try:
+            return AccountUser.objects.get(id=user_id)
+        except AccountUser.DoesNotExist:
+            return None
+</code></pre>
+
+<p>Добавим ApiTokenBackend к списку бекендов для аутентификации в <code>settings.py</code>:</p>
+
+<pre><code class="language-python">AUTHENTICATION_BACKENDS = [  
+    'django.contrib.auth.backends.ModelBackend',
+    'path.to.ApiTokenBackend'
+]
+</code></pre>
+
+<p>Django будет использовать два бекенда для аутентификации: <code>ModelBackend</code> — по email и <code>`ApiTokenBackend</code> — по токену.</p>
+
+<p>Теперь давайте определимся, что наш публичный API будет доступен на поддомене api. Далее изменим ход обработки запроса так, чтобы Django аутентифицировал пользователей по токену, если это запрос отправлен на поддомен api и в GET-параметрах запроса передан ключ api_token. Напишем соответствующий обработчик в слой Middleware.</p>
+
+<pre><code class="language-python">class ApiTokenAuthMiddleware(object):  
+    def process_request(self, request):
+        if not hasattr(request, 'subdomain') or request.subdomain != 'api':
+            return
+
+        token = request.GET.get('api_token', None)
+        if not token:
+            return
+
+        try:
+           user = authenticate(api_token=token)
+           if user:
+              request.user = user
+        except AccountUser.DoesNotExist:
+            return None
+</code></pre>
+
+<p>Отлично. Функция <code>authenticate</code> будет использовать <code>ApiTokenBackend</code> для аутентификации. Теперь запросы к публичному API будут ассоциироваться с определенным пользователем. Однако, у нас есть одна проблема с POST-запросами: они не будут корректно обрабатываться из-за проверки CSRF токена. Исправим это через другой компонент Middleware.</p>
+
+<pre><code class="language-python">class ApiTokenCsrfExemptViewMiddleware(object):  
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        if hasattr(request, 'subdomain') and request.subdomain == 'api':
+            setattr(callback, 'csrf_exempt', True)
+</code></pre>
+
+<p>Теперь для POST-запросов к публичному API не будет выполняться проверка CSRF токена.</p>
+
+<p>Слой Middleware компонентов теперь должен выглядеть как-то так.</p>
+
+<pre><code class="language-python">MIDDLEWARE_CLASSES = [  
+    ...
+
+    'subdomains.middleware.SubdomainURLRoutingMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+
+    ...
+
+    'path.to.middleware.ApiTokenCsrfExemptViewMiddleware',
+
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    ...
+
+    'path.to.middleware.ApiTokenAuthMiddleware'
+]
+</code></pre>
+
+<p>Как можно заметить, у нас остался один компонент, который мы пока не упомянули: CorsMiddleware. Это часть библиотеки <a href="https://pypi.python.org/pypi/django-cors-headers/2.0.2">django-cors-headers</a>, которая используется для управления заголовками Access-Control-Allow-Origin в ответе от сервера.</p>
+
+<p>Стандартный механизм обработки запросов Django будет запрещать любые запросы с доменов, отличных от того, на котором работает сам сервер приложения. Нам нужно настроить политику сервера таким образом, чтобы запросы на поддомен api были разрешены всегда.</p>
+
+<p>Подробнее о CORS: <a href="https://ru.wikipedia.org/wiki/Cross-origin">https://ru.wikipedia.org/wiki/Cross-origin</a><em>resource</em>sharing.</p>
+
+<p>Устанавливаем <a href="https://pypi.python.org/pypi/django-cors-headers/2.0.2">django-cors-headers</a> и создаем файл signals.py в нужном приложении со следующим содержимым:</p>
+
+<pre><code class="language-python">from corsheaders.signals import check_request_enabled
+
+
+def cors_allowed(sender, request, **kwargs):  
+    return hasattr(request, 'subdomain') and request.subdomain == 'api'
+
+
+check_request_enabled.connect(cors_allowed)  
+</code></pre>
+
+<p>В <code>apps.py</code> пишем:</p>
+
+<pre><code class="language-python">class MyAppConfig(AppConfig):  
+    name = 'app_name'
+
+    def ready(self):
+        from . import signals
+</code></pre>
+
+<p>Тем самым мы гарантируем, что обработчик сигнала для проверки запроса на CORS будет зарегистрирован. </p>
+
+<p>Отлично. Нам остается лишь настроить urlconf таким образом, чтобы запросы на поддомен api доходили до views.</p>
+
+<p>Сначала мы можем поступить по-простому и открыть доступ ко всем внутренним endpoint'ам, которые использует ваше приложение.</p>
+
+<p>ROOT<em>URLCONF = 'my</em>api<em>app.urls' <br>
+SUBDOMAIN</em>URLCONFS = { <br>
+    None: 'marketing_website.urls',
+    'api': 'myapp.urls'
+}</p>
+
+<p>Это достаточно плохое решение, т.к. теперь пользователям публичного API становятся доступны все внутренние endpoint'ы, среди которых могут быть критичные. Поэтому нам нужно построить гибкий <code>urlconf</code>, в котором мы смогли явно задавать какой из endpoint'ов доступен для внутренного API, а какой для внешнего.</p>
+
+<p>Создайте пакет urls, внутри которого создайте еще один пакет api с файлами <code>private.py</code> и <code>public.py</code>, которые будут определять список доступных endpoint'ов во внутреннем и публичном API соответственно.</p>
+
+<p>Содержание этих файлов будет примерно такое:</p>
+
+<pre><code class="language-python">from django.conf.urls import url  
+from myapp.api.users import UsersListApiView
+
+urlpatterns = [  
+    url(r'^users/list$', UsersListApiView.as_view(), name='api-users-list'),
+    ...
+]
+</code></pre>
+
+<p>Добавляя или убирая из этих файлов endpoint'ы, мы можем определять какие методы будут доступны в публичном и внутреннем API.</p>
+
+<p>Теперь добавим в модуль <code>urls</code> файлы <code>app_urls.py</code> и <code>public_api_urls.py</code>. Первый будет определять urlconf для приложения, а второй только для публичного API.</p>
+
+<p>Файл <code>app_urls.py</code>:</p>
+
+<pre><code class="language-python">from django.conf.urls import url, include
+
+urlpatterns = [  
+    url(r'^v1/', include('myapp.urls.api.public'))
+]
+</code></pre>
+
+<p>Файл <code>public_api_urls.py</code>:</p>
+
+<pre><code class="language-python">from django.conf.urls import url, include
+
+urlpatterns = [  
+    ...
+    url(r'^api/v1/', include('myapp.urls.api.private')),
+    ...
+]
+</code></pre>
+
+<p>Теперь изменим urlconf в файле <code>settings.py</code> следующим образом:</p>
+
+<pre><code class="language-python">ROOT_URLCONF = 'myapp.urls.app_urls'  
+SUBDOMAIN_URLCONFS = {  
+    None: 'marketing_website.urls',
+    'api': 'myapp.urls.public_api_urls'
+}
+</code></pre>
+
+<p>Готово. Теперь внутренний API будет доступен на <a href="https://subdomain.myservice.com/api/v1/">https://subdomain.myservice.com/api/v1/</a>, а публичный на <a href="https://api.myservice.com/v1/">https://api.myservice.com/v1/</a>. Соответственно, в первом случае у вас будет работать аутентификация через сессию, а во втором случае через api_token.</p>
+
+<p>Решение рабочее, простое в реализации и в большинстве случаев этого будет вполне достаточно, но если вы начинаете проект с нуля, рекомендую смотреть в сторону Django REST Framework.</p>
+        </section>
+
+        <footer class="post-footer">
+
+
+
+            <section class="author">
+                <h4><a href="../author/oleg/">Oleg</a></h4>
+
+                    <p>Read <a href="../author/oleg/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=%D0%A0%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0%20SaaS%20%D0%BD%D0%B0%20Django%20%D0%B8%20Python.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201.%20%D0%9F%D0%BE%D0%B4%D0%B4%D0%BE%D0%BC%D0%B5%D0%BD%D1%8B%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D0%B9%20API&amp;url=http://localhost:2368/post-post-2/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/post-post-2/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/post-post-2/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+        </footer>
+
+    </article>
+</main>
+
+<aside class="read-next">
+    <a class="read-next-story prev no-cover" href="../quick-tip-speed-up-your-python-data-processing-scripts-with-process-pools/">
+        <section class="post">
+            <h2>Quick Tip: Speed up your Python data processing scripts with Process Pools</h2>
+            <p>Get a 4x speed-up with 3 lines of code! Python is a great programming language for crunching data and…</p>
+        </section>
+    </a>
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://localhost:2368">defosk</a> © 2017</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=222cfc60eb"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=222cfc60eb"></script>
+
+</body>
